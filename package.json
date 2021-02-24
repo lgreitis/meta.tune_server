@@ -1,0 +1,23 @@
+{
+  "name": "metatune",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "colors": "^1.4.0",
+    "dateformat": "^4.5.1",
+    "express": "^4.17.1",
+    "express-session": "^1.17.1",
+    "md5": "^2.3.0",
+    "mongoose": "^5.11.17",
+    "passport": "^0.4.1",
+    "passport-local": "^1.0.0",
+    "socket.io": "^3.1.1"
+  }
+}
