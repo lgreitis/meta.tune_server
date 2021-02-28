@@ -3,27 +3,14 @@
 exports.getRooms = async (req, res, next) => {
     var getMain = req.getMain;
 
-    console.log(req.user)
-
     if(req.user){
-        res.send(getMain().rooms);
+        let payload = [];
+        getMain().rooms.forEach(element => {
+            payload.push(element.getSafePayload());
+        });
+        res.json(payload);
     }
     else {
-        res.json({ success: false });
-    }
-}
-
-exports.joinRoom = async (req, res, next) => {
-    const { slug } = req.body;
-    var getMain = req.getMain;
-
-    if(req.user){
-        var room = getMain().rooms.filter((obj) => {
-            return obj.slug === slug;
-        })[0];
-        res.send(room);
-    }
-    else {
-        res.json({ success: false });
+        res.status(401).send();
     }
 }

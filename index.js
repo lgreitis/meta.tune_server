@@ -9,8 +9,6 @@ const mongoose = require('mongoose');
 var program = {};
 const main = {
     rooms: [],
-    sessions: [],
-    storeSync: [],
     saving: false
 }
 console.log(main)
