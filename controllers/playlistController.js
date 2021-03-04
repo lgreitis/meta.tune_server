@@ -1,5 +1,4 @@
 const getYoutubeTitle = require('get-youtube-title')
-const logger = require('../logger.js');
 
 exports.addToPlaylist = async (req, res, next) => {
     const { id } = req.body;
@@ -12,7 +11,7 @@ exports.addToPlaylist = async (req, res, next) => {
                     { $push: { playlist: [{ yt_id: id, title: title }] } },
                     function (err, result) {
                         if (err) {
-                            logger.warn(err)
+                            console.log(err)
                             res.status(500).send();
                         }
                         else {
