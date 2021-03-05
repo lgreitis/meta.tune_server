@@ -3,6 +3,7 @@ const cluster = require("cluster");
 const http = require("http");
 const { Server } = require("socket.io");
 const redisAdapter = require("socket.io-redis");
+
 const numCPUs = require("os").cpus().length;
 const { setupMaster, setupWorker } = require("@socket.io/sticky");
 
@@ -16,7 +17,7 @@ if (cluster.isMaster) {
 
     const httpServer = http.createServer();
     setupMaster(httpServer, {
-        loadBalancingMethod: "round-robin", // either "random", "round-robin" or "least-connection"
+        loadBalancingMethod: "random", // either "random", "round-robin" or "least-connection"
     });
     httpServer.listen(process.env.PORT || config.port);
 
@@ -31,11 +32,6 @@ if (cluster.isMaster) {
 } else {
     console.log(`Worker ${process.pid} started`);
 
-    const httpServer = http.createServer(app);
-    const io = new Server(httpServer);
-    io.adapter(redisAdapter({ host: "localhost", port: 6379 }));
-    setupWorker(io);
-
     mongoose
         .connect(config.dbPassword,
             { useNewUrlParser: true, useUnifiedTopology: true }
@@ -43,11 +39,12 @@ if (cluster.isMaster) {
         .then(() => console.log('MongoDB Connected'))
         .catch(err => console.log(err));
 
-    webHandler(app);
-
-    io.on("connection", (socket) => {
-        socket.on('chat message', msg => {
-            io.emit('chat message', ": " + msg);
-        });
+    const httpServer = http.createServer(app);
+    const io = new Server(httpServer, {
+        transports: ["websocket"] // HTTP long-polling is disabled
     });
+    io.adapter(redisAdapter({ host: "localhost", port: 6379 }));
+    setupWorker(io);
+
+    webHandler(app, io);
 }

@@ -70,9 +70,11 @@
     <script src="/socket.io/socket.io.js"></script>
 
     <script>
-        var socket = io();
+        var socket = io({
+            transports: ["websocket"] // HTTP long-polling is disabled
+        });
 
-        
+
         var messages = document.getElementById('messages');
         var form = document.getElementById('form');
         var input = document.getElementById('input');
