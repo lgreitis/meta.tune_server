@@ -6,8 +6,9 @@ const RoomSchema = new mongoose.Schema({
         required: true
     },
     knownUsers: [{
-        user_id: {
-            type: mongoose.ObjectId,
+        user: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
             required: true
         },
         role: {
@@ -20,16 +21,13 @@ const RoomSchema = new mongoose.Schema({
         required: true
     },
     creator: {
-        type: String,
-        required: true
-    },
-    creatorId: {
-        type: mongoose.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
         required: true
     },
     motd: {
         type: String,
-        required: false
+        required: true
     },
     desc: {
         type: String,

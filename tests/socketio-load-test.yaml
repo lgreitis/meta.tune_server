@@ -1,0 +1,19 @@
+config:
+  target: "http://localhost:8888"
+  engines:
+   socketio-v3: { transports: ["websocket"] }
+  socketio:
+    transports: ["websocket"]
+  phases:
+    - duration: 30 # Run scenario for...
+      arrivalCount: 2000 # Create ... virtual users per scenario
+scenarios:
+  - engine: socketio-v3
+    flow:
+      - emit:
+          channel: "chat message"
+          data: "Hello! {{ $randomString() }}"
+      - emit:
+          channel: "chat message"
+          data: "Hello! {{ $randomString() }}"
+      

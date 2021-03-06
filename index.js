@@ -3,7 +3,6 @@ const cluster = require("cluster");
 const http = require("http");
 const { Server } = require("socket.io");
 const redisAdapter = require("socket.io-redis");
-
 const numCPUs = require("os").cpus().length;
 const { setupMaster, setupWorker } = require("@socket.io/sticky");
 
@@ -36,7 +35,7 @@ if (cluster.isMaster) {
         .connect(config.dbPassword,
             { useNewUrlParser: true, useUnifiedTopology: true }
         )
-        .then(() => console.log('MongoDB Connected'))
+        .then(() => console.log(process.pid + ' MongoDB Connected'))
         .catch(err => console.log(err));
 
     const httpServer = http.createServer(app);
