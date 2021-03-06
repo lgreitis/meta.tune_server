@@ -27,11 +27,11 @@ const RoomSchema = new mongoose.Schema({
         type: mongoose.ObjectId,
         required: true
     },
-    sub: {
+    motd: {
         type: String,
         required: false
     },
-    lore: {
+    desc: {
         type: String,
         required: true
     },
