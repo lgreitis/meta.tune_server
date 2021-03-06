@@ -4,6 +4,8 @@ const urlSlug = require('url-slug')
 exports.getRooms = async (req, res, next) => {
     if (req.user) {
         Room.find()
+            .populate("creator", "name -_id")
+            .select("-knownUsers -_id -__v")
             .then((rooms) => {
                 res.status(201).json(rooms)
             })
