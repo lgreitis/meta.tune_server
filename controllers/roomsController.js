@@ -3,14 +3,9 @@ const urlSlug = require('url-slug')
 
 exports.getRooms = async (req, res, next) => {
     if (req.user) {
-        const rooms = [];
-
         Room.find()
-            .then((room) => {
-                rooms.push(room);
-            })
-            .finally(() => {
-                res.status(201).json(rooms);
+            .then((rooms) => {
+                res.status(201).json(rooms)
             })
             .catch((err) => {
                 console.log(err);
