@@ -1,29 +1,45 @@
-// TODO: DON'T SEND ALL THE ROOM DATA, and only send a couple of rooms.
-// For testing purposes this will send all room data.
+const Room = require("../models/Room");
+const urlSlug = require('url-slug')
+
 exports.getRooms = async (req, res, next) => {
-    var getMain = req.getMain;
-
-    console.log(req.user)
-
-    if(req.user){
-        res.send(getMain().rooms);
+    if (req.user) {
+        Room.find()
+            .then((rooms) => {
+                res.status(201).json(rooms)
+            })
+            .catch((err) => {
+                console.log(err);
+            })
     }
     else {
-        res.json({ success: false });
+        res.status(401).send();
     }
 }
 
-exports.joinRoom = async (req, res, next) => {
-    const { slug } = req.body;
-    var getMain = req.getMain;
+exports.postRoom = async (req, res, next) => {
+    if (req.user) {
+        const { name, motd, desc } = req.body;
+        const slug = urlSlug.convert(name);
+        const creator = req.user;
 
-    if(req.user){
-        var room = getMain().rooms.filter((obj) => {
-            return obj.slug === slug;
-        })[0];
-        res.send(room);
+        Room.findOne({ $or: [{ slug: slug }, { name: name }] }).then(room => {
+            if (room) {
+                res.status(403).send();
+            } else {
+                const newRoom = new Room({
+                    slug,
+                    name,
+                    creator,
+                    motd,
+                    desc
+                });
+                newRoom.save().then((room) => {
+                    res.json(newRoom)
+                });
+            }
+        })
     }
     else {
-        res.json({ success: false });
+        res.status(401).send();
     }
 }

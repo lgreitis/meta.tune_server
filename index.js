@@ -1,71 +1,49 @@
-const Framework = require('./framework.js');
-const logger = require('./logger.js');
-const Room = require('./lib/room.js');
-const WebHandler = require('./lib/webHandler.js');
-const fs = require('fs');
+const app = require("express")();
+const cluster = require("cluster");
+const http = require("http");
+const { Server } = require("socket.io");
+const redisAdapter = require("socket.io-redis");
+const numCPUs = require("os").cpus().length;
+const { setupMaster, setupWorker } = require("@socket.io/sticky");
+
+const config = require('./config.json');
+
 const mongoose = require('mongoose');
+const webHandler = require('./lib/webHandler')
 
+if (cluster.isMaster) {
+    console.log(`Master ${process.pid} is running`);
 
-var program = {};
-const main = {
-    rooms: [],
-    sessions: [],
-    storeSync: [],
-    saving: false
-}
-console.log(main)
-program.onLaunch = (error) => {
-    logger.info('Starting up.');
-
-    loadConfiguration();
-    loadRooms();
-
-    new WebHandler(() => {
-        return main;
+    const httpServer = http.createServer();
+    setupMaster(httpServer, {
+        loadBalancingMethod: "random", // either "random", "round-robin" or "least-connection"
     });
-    
+    httpServer.listen(process.env.PORT || config.port);
+
+    for (let i = 0; i < 4; i++) {
+        cluster.fork();
+    }
+
+    cluster.on("exit", (worker) => {
+        console.log(`Worker ${worker.process.pid} died`);
+        //cluster.fork();
+    });
+} else {
+    console.log(`Worker ${process.pid} started`);
+
     mongoose
-        .connect(main.config.dbPassword,
+        .connect(config.dbPassword,
             { useNewUrlParser: true, useUnifiedTopology: true }
         )
-        .then(() => logger.log('MongoDB Connected'))
-        .catch(err => logger.warn(err));
+        .then(() => console.log(process.pid + ' MongoDB Connected'))
+        .catch(err => console.log(err));
 
-    
-    //console.log(main)
-};
-
-function loadConfiguration() {
-    var raw = JSON.parse(fs.readFileSync('./config.json', {
-        encoding: 'utf8'
-    }));
-
-    var conf = {};
-    Object.keys(raw).forEach((attrname) => {
-        conf[attrname] = raw[attrname];
+    const httpServer = http.createServer(app);
+    const io = new Server(httpServer, {
+        transports: ["websocket"] // HTTP long-polling is disabled
     });
+    io.adapter(redisAdapter({ host: config.redisIP, port: 6379 }));
+    setupWorker(io);
 
-    main.config = conf;
+    webHandler(app, io);
 }
-
-// TODO: rework when DB framework is created
-function loadRooms() {
-    fs.readdir('./rooms/', function (err, files) {
-        if (err) throw err;
-        files.forEach(function (file) {
-            if (!(file.endsWith('.json')))
-                return;
-            var room = new Room(() => {
-                return main;
-            }, file.toString().before('.json'));
-
-            room.load();
-
-            main.rooms.push(room);
-
-            logger.log('Loaded room %s', room.name);
-        });
-    });
-};
-
-new Framework(program, false);

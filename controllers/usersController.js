@@ -1,7 +1,5 @@
-const bcrypt = require('bcryptjs');
 const passport = require('passport');
 const User = require('../models/User');
-const logger = require('../logger.js');
 
 exports.login = async (req, res, next) => {
     passport.authenticate('local', function (err, account) {
@@ -34,7 +32,7 @@ exports.signup = async (req, res, next) => {
         User.findOne({ $or:[{name: name}, {email: email}] }).then(user => {
             if (user) {
                 // TODO: use flashes to update this to the user
-                res.json({ success: false });
+                res.status(403).send();
                 errors.push({ msg: 'Email already exists' });
             } else {
                 const newUser = new User({
@@ -43,9 +41,9 @@ exports.signup = async (req, res, next) => {
                     password
                 });
                 newUser.save().then((user) => {
-                    res.json({ success: true });
+                    res.status(201).send();
                 }).catch(err => {
-                    logger.warn(err)
+                    console.log(err)
                 })
             }
         });
