@@ -42,7 +42,7 @@ if (cluster.isMaster) {
     const io = new Server(httpServer, {
         transports: ["websocket"] // HTTP long-polling is disabled
     });
-    io.adapter(redisAdapter({ host: "localhost", port: 6379 }));
+    io.adapter(redisAdapter({ host: config.redisIP, port: 6379 }));
     setupWorker(io);
 
     webHandler(app, io);
