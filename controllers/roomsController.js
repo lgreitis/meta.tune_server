@@ -46,3 +46,25 @@ exports.postRoom = async (req, res, next) => {
         res.status(401).send();
     }
 }
+
+exports.postRoomInfo = async (req, res) => {
+    if(req.user){
+        const { name, motd, desc } = req.body;
+
+        Room.findOne({ $and: [{ creator: req.user }, { name: name }] })
+        .then((room) => {
+            if(motd != room.motd && desc != room.desc && motd != "" && desc != ""){
+                room.motd = motd;
+                room.desc = desc;
+            }
+            else if(desc != room.desc && desc != ""){
+                room.desc = desc;
+            }
+            else if(motd != room.motd && motd != ""){
+                room.motd = motd;
+            }
+            room.save();
+            res.status(201).json(room);
+        })
+    }
+}
