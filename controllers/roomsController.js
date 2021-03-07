@@ -1,5 +1,6 @@
 const Room = require("../models/Room");
-const urlSlug = require('url-slug')
+const urlSlug = require('url-slug');
+const roomUtils = require('../lib/roomUtils');
 
 exports.getRooms = async (req, res, next) => {
     if (req.user) {

@@ -1,15 +1,8 @@
-const app = require("express")();
 const cluster = require("cluster");
 const http = require("http");
-const { Server } = require("socket.io");
-const redisAdapter = require("socket.io-redis");
-const numCPUs = require("os").cpus().length;
 const { setupMaster, setupWorker } = require("@socket.io/sticky");
-
+const numCPUs = require("os").cpus().length;
 const config = require('./config.json');
-
-const mongoose = require('mongoose');
-const webHandler = require('./lib/webHandler')
 
 if (cluster.isMaster) {
     console.log(`Master ${process.pid} is running`);
@@ -29,21 +22,5 @@ if (cluster.isMaster) {
         //cluster.fork();
     });
 } else {
-    console.log(`Worker ${process.pid} started`);
-
-    mongoose
-        .connect(config.dbPassword,
-            { useNewUrlParser: true, useUnifiedTopology: true }
-        )
-        .then(() => console.log(process.pid + ' MongoDB Connected'))
-        .catch(err => console.log(err));
-
-    const httpServer = http.createServer(app);
-    const io = new Server(httpServer, {
-        transports: ["websocket"] // HTTP long-polling is disabled
-    });
-    io.adapter(redisAdapter({ host: config.redisIP, port: 6379 }));
-    setupWorker(io);
-
-    webHandler(app, io);
+    require('./worker')();
 }

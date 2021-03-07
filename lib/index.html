@@ -71,6 +71,9 @@
 
     <script>
         var socket = io({
+            query: {
+                slug: 'all-music-here'
+            },
             transports: ["websocket"] // HTTP long-polling is disabled
         });
 
