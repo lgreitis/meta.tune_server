@@ -27,13 +27,12 @@ exports.signup = async (req, res, next) => {
     }
 
     if (errors.length > 0) {
-        // TODO: use flashes to update this to the user
+        res.status(400).json(errors);
     } else {
         User.findOne({ $or:[{name: name}, {email: email}] }).then(user => {
             if (user) {
-                // TODO: use flashes to update this to the user
-                res.status(403).send();
-                errors.push({ msg: 'Email already exists' });
+                errors.push({ msg: 'Email or username already exists' });
+                res.status(400).send(errors);
             } else {
                 const newUser = new User({
                     name,
