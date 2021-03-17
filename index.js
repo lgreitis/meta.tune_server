@@ -1,8 +1,9 @@
 const cluster = require("cluster");
 const http = require("http");
-const { setupMaster, setupWorker } = require("@socket.io/sticky");
+const { setupMaster } = require("@socket.io/sticky");
+// eslint-disable-next-line no-unused-vars
 const numCPUs = require("os").cpus().length;
-const config = require('./config.json');
+const config = require("./config.json");
 
 if (cluster.isMaster) {
     console.log(`Master ${process.pid} is running`);
@@ -22,5 +23,5 @@ if (cluster.isMaster) {
         //cluster.fork();
     });
 } else {
-    require('./worker')();
+    require("./worker")();
 }
