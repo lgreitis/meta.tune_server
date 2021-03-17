@@ -4,9 +4,9 @@ const http = require("http");
 const { Server } = require("socket.io");
 const redisAdapter = require("socket.io-redis");
 const { setupWorker } = require("@socket.io/sticky");
-const mongoose = require('mongoose');
-const roomUtils = require('./lib/roomUtils');
-const config = require('./config.json');
+const mongoose = require("mongoose");
+const roomUtils = require("./lib/roomUtils");
+const config = require("./config.json");
 
 module.exports = function() {
     console.log(`Worker ${process.pid} started`);
@@ -25,8 +25,8 @@ module.exports = function() {
     io.adapter(redisAdapter({ host: config.redisIP, port: 6379 }));
     setupWorker(io);
 
-    require('./lib/webHandler')(app, io);
-}
+    require("./lib/webHandler")(app, io);
+};
 
 function afterMongodbConnect() {
     if (cluster.worker.id == 1){

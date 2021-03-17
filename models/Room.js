@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const RoomSchema = new mongoose.Schema({
     slug: {
@@ -8,7 +8,7 @@ const RoomSchema = new mongoose.Schema({
     knownUsers: [{
         user: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'User',
+            ref: "User",
             required: true
         },
         role: {
@@ -22,7 +22,7 @@ const RoomSchema = new mongoose.Schema({
     },
     creator: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+        ref: "User",
         required: true
     },
     motd: {
@@ -35,6 +35,6 @@ const RoomSchema = new mongoose.Schema({
     },
 });
 
-const Room = mongoose.model('Room', RoomSchema);
+const Room = mongoose.model("Room", RoomSchema);
 
 module.exports = Room;

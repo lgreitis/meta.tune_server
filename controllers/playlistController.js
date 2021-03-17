@@ -1,4 +1,5 @@
-const getYoutubeTitle = require('get-youtube-title')
+/* eslint-disable no-unused-vars */
+const getYoutubeTitle = require("get-youtube-title");
 
 exports.addToPlaylist = async (req, res, next) => {
     const { id } = req.body;
@@ -11,7 +12,7 @@ exports.addToPlaylist = async (req, res, next) => {
                     { $push: { playlist: [{ yt_id: id, title: title }] } },
                     function (err, result) {
                         if (err) {
-                            console.log(err)
+                            console.log(err);
                             res.status(500).send();
                         }
                         else {
@@ -23,12 +24,12 @@ exports.addToPlaylist = async (req, res, next) => {
             else {
                 res.status(500).send();
             }
-        })
+        });
     }
     else {
         res.status(401).send();
     }
-}
+};
 
 exports.getPlaylist = async (req, res, next) => {
     if (req.user) {
@@ -37,7 +38,7 @@ exports.getPlaylist = async (req, res, next) => {
     else {
         res.status(401).send();
     }
-}
+};
 
 exports.deletePlaylist = async (req, res, next) => {
     if (req.user) {
@@ -46,4 +47,4 @@ exports.deletePlaylist = async (req, res, next) => {
     else {
         res.status(401).send();
     }
-}
+};
