@@ -1,5 +1,6 @@
 {
     "port": 8888,
     "dbPassword": "mongodb+srv://dbUser:qkzv2964il4u@cluster0.pgmwa.mongodb.net/dev?retryWrites=true&w=majority",
+    "dbPasswordLocal": "mongodb://127.0.0.1:27017/dev?retryWrites=true&w=majority",
     "redisIP": "localhost"
 }

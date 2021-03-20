@@ -2,6 +2,15 @@
 const passport = require("passport");
 const User = require("../models/User");
 
+exports.isloggedin = async (req, res, next) => {
+    if (req.user) {
+        res.status(200).send();
+    }
+    else {
+        res.status(401).send();
+    }
+};
+
 exports.login = async (req, res, next) => {
     passport.authenticate("local", function (err, account) {
         req.logIn(account, function () {
