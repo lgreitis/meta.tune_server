@@ -2,6 +2,15 @@
 const passport = require("passport");
 const User = require("../models/User");
 
+exports.isloggedin = async (req, res, next) => {
+    if (req.user) {
+        res.status(200).send();
+    }
+    else {
+        res.status(401).send();
+    }
+};
+
 exports.login = async (req, res, next) => {
     passport.authenticate("local", function (err, account) {
         req.logIn(account, function () {
@@ -30,7 +39,7 @@ exports.signup = async (req, res, next) => {
     if (errors.length > 0) {
         res.status(400).json(errors);
     } else {
-        User.findOne({ $or:[{name: name}, {email: email}] }).then(user => {
+        User.findOne({ $or: [{ name: name }, { email: email }] }).then(user => {
             if (user) {
                 errors.push({ msg: "Email or username already exists" });
                 res.status(400).json(errors);
