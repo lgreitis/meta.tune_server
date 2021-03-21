@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 const Room = require("../models/Room");
 const urlSlug = require("url-slug");
-const roomUtils = require("../lib/roomUtils");
 
 exports.getRooms = async (req, res, next) => {
     if (req.user) {
@@ -49,19 +48,19 @@ exports.postRoom = async (req, res, next) => {
 };
 
 exports.postRoomInfo = async (req, res) => {
-    if(req.user){
+    if (req.user) {
         const { name, motd, desc } = req.body;
 
         Room.findOne({ $and: [{ creator: req.user }, { name: name }] })
             .then((room) => {
-                if(motd != room.motd && desc != room.desc && motd != "" && desc != ""){
+                if (motd != room.motd && desc != room.desc && motd != "" && desc != "") {
                     room.motd = motd;
                     room.desc = desc;
                 }
-                else if(desc != room.desc && desc != ""){
+                else if (desc != room.desc && desc != "") {
                     room.desc = desc;
                 }
-                else if(motd != room.motd && motd != ""){
+                else if (motd != room.motd && motd != "") {
                     room.motd = motd;
                 }
                 room.save();

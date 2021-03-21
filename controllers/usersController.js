@@ -39,7 +39,7 @@ exports.signup = async (req, res, next) => {
     if (errors.length > 0) {
         res.status(400).json(errors);
     } else {
-        User.findOne({ $or:[{name: name}, {email: email}] }).then(user => {
+        User.findOne({ $or: [{ name: name }, { email: email }] }).then(user => {
             if (user) {
                 errors.push({ msg: "Email or username already exists" });
                 res.status(400).json(errors);

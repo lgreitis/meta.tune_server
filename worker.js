@@ -8,7 +8,7 @@ const mongoose = require("mongoose");
 const roomUtils = require("./lib/roomUtils");
 const config = require("./config.json");
 
-module.exports = function() {
+module.exports = function () {
     console.log(`Worker ${process.pid} started`);
 
     mongoose
@@ -29,7 +29,7 @@ module.exports = function() {
 };
 
 function afterMongodbConnect() {
-    if (cluster.worker.id == 1){
+    if (cluster.worker.id == 1) {
         roomUtils.allRoomsToRedis();
     }
 }
