@@ -1,6 +1,8 @@
 /* eslint-disable no-unused-vars */
 const passport = require("passport");
 const User = require("../models/User");
+const fs = require("fs");
+
 
 exports.isloggedin = async (req, res, next) => {
     if (req.user) {
@@ -57,4 +59,37 @@ exports.signup = async (req, res, next) => {
             }
         });
     }
+};
+
+exports.changePhoto = async (req, res) => {
+    if(req.user){
+        User.findById(req.user._id)
+        .then((user) => {
+            user.image.data = fs.readFileSync(req.file.path)
+            user.image.contentType = "image/png"
+            user.save();
+            res.status(201).send();
+        })
+        .catch(err => {
+            console.log(err)
+        })
+    }
+}
+
+exports.getImage = async (req, res) => {
+    if(req.user){
+
+    }
+    User.findById(req.user._id)
+    .then((user) => {
+        const id = req.params.w;
+
+        const img = Buffer.from(user.image.data.buffer, "base64");
+    
+        res.writeHead(200, {
+            "Content-Type": "image/png",
+            "Content-Length": img.length
+        });
+        res.end(img);
+    })
 };

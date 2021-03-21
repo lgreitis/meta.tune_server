@@ -32,7 +32,11 @@ const UserSchema = new mongoose.Schema({
             type: Number,
             required: true
         }
-    }]
+    }],
+    image: {
+        data: Buffer,
+        contentType: String
+    }
 });
 
 UserSchema.pre("save", async function (next) {
