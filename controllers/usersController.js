@@ -14,7 +14,7 @@ exports.isloggedin = async (req, res, next) => {
 exports.login = async (req, res, next) => {
     passport.authenticate("local", function (err, account, message) {
         req.logIn(account, function () {
-            res.status(err ? 500 : 200).send(message ? message : account);
+            res.status(err ? 500 : 200).send(message ? message : true);
         });
     })(req, res, next);
 };

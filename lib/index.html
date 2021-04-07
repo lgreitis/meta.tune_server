@@ -63,7 +63,7 @@
 
 <body>
     <button onclick=joinQueue()>joinqueue</button>
-    <button onclick=test()>skip song</button>
+    <button onclick=skip()>skip song</button>
     <iframe id="ytplayer" type="text/html" width="640" height="360" src="" frameborder="0"></iframe>
     <ul id="messages"></ul>
     <form id="form" action="">
@@ -74,7 +74,7 @@
     <script>
         var socket = io({
             query: {
-                slug: 'all-music'
+                slug: 'testing'
             },
             transports: ["websocket"] // HTTP long-polling is disabled
         });
@@ -95,8 +95,8 @@
             socket.emit('join queue');
         }
 
-        function test() {
-            socket.emit('test');
+        function skip() {
+            socket.emit('skip');
         }
 
         function getPlaylist() {             

@@ -20,8 +20,17 @@ if (cluster.isMaster) {
 
     cluster.on("exit", (worker) => {
         console.log(`Worker ${worker.process.pid} died`);
-        //cluster.fork();
+        cluster.fork();
     });
+
+    process
+        .on("unhandledRejection", (reason, p) => {
+            console.error(reason, "Unhandled Rejection at Promise", p);
+        })
+        .on("uncaughtException", err => {
+            console.error(err, "Uncaught Exception thrown");
+            process.exit(1);
+        });
 } else {
     require("./worker")();
 }

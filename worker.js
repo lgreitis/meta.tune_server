@@ -10,7 +10,7 @@ const config = require("./config.json");
 
 module.exports = function () {
     console.log(`Worker ${process.pid} started`);
-
+    
     mongoose
         .connect(config.dbPassword,
             { useNewUrlParser: true, useUnifiedTopology: true }
@@ -26,6 +26,15 @@ module.exports = function () {
     setupWorker(io);
 
     require("./lib/webHandler")(app, io);
+
+    process
+        .on("unhandledRejection", (reason, p) => {
+            console.error(reason, "Unhandled Rejection at Promise", p);
+        })
+        .on("uncaughtException", err => {
+            console.error(err, "Uncaught Exception thrown");
+            process.exit(1);
+        });
 };
 
 function afterMongodbConnect() {

@@ -8,7 +8,7 @@ exports.getRooms = async (req, res, next) => {
             .populate("creator", "name -_id")
             .select("-knownUsers -_id -__v")
             .then((rooms) => {
-                res.status(201).json(rooms);
+                res.status(200).json(rooms);
             })
             .catch((err) => {
                 console.log(err);

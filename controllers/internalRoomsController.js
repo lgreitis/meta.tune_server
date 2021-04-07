@@ -5,7 +5,7 @@ const roomUtils = require("../lib/roomUtils");
 exports.goToNextSong = async (req, res, next) => {
     const roomSlug = JSON.parse(Object.keys(req.body)[0]).roomSlug;
     req.io.to(roomSlug).emit("chat message", { user: "Server", text: "Song ended " + roomSlug });
-    roomUtils.skipSong(roomSlug, (err, res) => {
+    roomUtils.changeSong(roomSlug, (err, res) => {
         if (err){
             console.log(err);
             req.io.to(roomSlug).emit("chat message", { user: "Server", text: "Error occured " + err });
