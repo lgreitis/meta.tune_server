@@ -51,15 +51,6 @@ exports.getPlaylist = async (req, res, next) => {
     }
 };
 
-exports.deletePlaylist = async (req, res, next) => {
-    if (req.user) {
-        res.status(404).send();
-    }
-    else {
-        res.status(401).send();
-    }
-};
-
 exports.deleteFromPlaylist = async (req, res, next) => {
     if (req.user) {
         const { id } = req.body;
@@ -79,6 +70,8 @@ exports.deleteFromPlaylist = async (req, res, next) => {
                 res.status(500).send();
             }
         });
+
+        res.send();
     }
     else {
         res.status(401).send();
