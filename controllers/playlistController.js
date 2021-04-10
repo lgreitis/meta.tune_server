@@ -61,23 +61,26 @@ exports.deletePlaylist = async (req, res, next) => {
 };
 
 exports.deleteFromPlaylist = async (req, res, next) => {
-    if(req.user){
-        const {id} = req.body;
+    if (req.user) {
+        const { id } = req.body;
         const index = "playlist." + (id - 1);
         const $unset_query = {};
         $unset_query[index] = 1;
 
-        req.user.updateOne({$unset : $unset_query}, (err, res) => {
-            console.log(res);
-            console.log(err);
+        req.user.updateOne({ $unset: $unset_query }, (err, res) => {
+            if (err) {
+                console.log(err);
+                res.status(500).send();
+            }
         });
-        req.user.updateOne({$pull : {"playlist" : null}}, (err, res) => {
-            console.log(res);
-            console.log(err);
+        req.user.updateOne({ $pull: { "playlist": null } }, (err, res) => {
+            if (err) {
+                console.log(err);
+                res.status(500).send();
+            }
         });
-        res.send();
     }
-    else{
+    else {
         res.status(401).send();
     }
 };
