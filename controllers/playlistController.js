@@ -15,7 +15,7 @@ exports.addToPlaylist = async (req, res, next) => {
             if (!err) {
                 if (ytDuration.toSecond(response.items[0].contentDetails.duration) <= 600 && response.items[0].contentDetails.contentRating.ytRating == undefined) {
                     req.user.updateOne(
-                        //{ $pop: {playlist: 1}},
+                        // { $pop: {playlist: 1}},
                         { $push: { playlist: [{ yt_id: id, title: response.items[0].snippet.title, length: ytDuration.toSecond(response.items[0].contentDetails.duration) }] } },
                         function (err, result) {
                             if (err) {
@@ -56,6 +56,28 @@ exports.deletePlaylist = async (req, res, next) => {
         res.status(404).send();
     }
     else {
+        res.status(401).send();
+    }
+};
+
+exports.deleteFromPlaylist = async (req, res, next) => {
+    if(req.user){
+        const {id} = req.body;
+        const index = "playlist." + (id - 1);
+        const $unset_query = {};
+        $unset_query[index] = 1;
+
+        req.user.updateOne({$unset : $unset_query}, (err, res) => {
+            console.log(res);
+            console.log(err);
+        });
+        req.user.updateOne({$pull : {"playlist" : null}}, (err, res) => {
+            console.log(res);
+            console.log(err);
+        });
+        res.send();
+    }
+    else{
         res.status(401).send();
     }
 };
