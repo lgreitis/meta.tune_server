@@ -12,8 +12,8 @@ exports.addToPlaylist = async (req, res, next) => {
     if (req.user) {
         youTube.getById(id, function (err, response) {
             if (!err) {
-                // TODO: don't allow adding livestreams
-                if (ytDuration.toSecond(response.items[0].contentDetails.duration) <= 600 && response.items[0].contentDetails.contentRating.ytRating == undefined) {
+                const parts = (ytDuration.format(response.items[0].contentDetails.duration)).split(":");
+                if (parts.length <= 2 && parts[0] <= 10 && response.items[0].contentDetails.contentRating.ytRating == undefined) {
                     req.user.updateOne(
                         // { $pop: {playlist: 1}},
                         { $push: { playlist: [{ yt_id: id, title: response.items[0].snippet.title, length: ytDuration.toSecond(response.items[0].contentDetails.duration) }] } },
