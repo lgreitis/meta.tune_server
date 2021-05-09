@@ -1,8 +1,19 @@
 /* eslint-disable no-unused-vars */
 const Room = require("../models/Room");
 const urlSlug = require("url-slug");
+const roomUtils = require("../lib/roomUtils");
 
 exports.getRooms = async (req, res, next) => {
+    if (req.user) {
+        roomUtils.getAllRooms((err, rres) => {
+            res.json(rres);
+        });
+    }
+    else {
+        res.status(401).send();
+    }
+
+    /*
     if (req.user) {
         Room.find()
             .populate("creator", "name -_id")
@@ -17,6 +28,7 @@ exports.getRooms = async (req, res, next) => {
     else {
         res.status(401).send();
     }
+    */
 };
 
 exports.postRoom = async (req, res, next) => {

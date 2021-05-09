@@ -74,7 +74,7 @@
     <script>
         var socket = io({
             query: {
-                slug: 'testing'
+                slug: 'all-music'
             },
             transports: ["websocket"] // HTTP long-polling is disabled
         });
@@ -92,32 +92,54 @@
         });
 
         function joinQueue() {
-            socket.emit('join queue');
+            socket.emit('join queue', 2 );
         }
 
         function skip() {
             socket.emit('skip');
         }
 
-        function getPlaylist() {             
+        function getPlaylist() {
             socket.emit('get playlist');
         }
 
         socket.on('chat message', function (msg) {
             var item = document.createElement('li');
+            console.log(msg);
             item.textContent = msg.user + ": " + msg.text;
             messages.appendChild(item);
             window.scrollTo(0, document.body.scrollHeight);
         });
 
         socket.on('now playing', function (msg) {
-            var s = document.getElementById('ytplayer');
-            s.src = `https://www.youtube.com/embed/${msg}?autoplay=1&mute=1`;
+            console.log(msg)
+            if (msg.mediaId != "false") {
+                const s = document.getElementById('ytplayer');
+                if (msg.new) {
+                    s.src = `https://www.youtube.com/embed/${msg.mediaId}?autoplay=1&mute=1`;
+                }
+                else {
+                    const milli = Date.now() - msg.playingData.syncTime
+                    const sec = Math.floor(milli / 1000);
+                    const id = msg.mediaId;
+                    s.src = `https://www.youtube.com/embed/${id}?autoplay=1&mute=1&start=${sec}`;
+                }
+            }
         });
 
         socket.on('join queue', function (msg) {
             console.log(msg + " joined the queue")
         });
+
+        /*
+        socket.on('init', function (msg) {
+            const milli = Date.now() - JSON.parse(msg[0]).syncTime
+            const sec = Math.floor(milli / 1000);
+            const id = msg[2]
+            const s = document.getElementById('ytplayer');
+            s.src = `https://www.youtube.com/embed/${id}?autoplay=1&mute=1&start=${sec}`;
+        });
+        */
     </script>
 </body>
 

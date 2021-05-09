@@ -1,19 +1,21 @@
 config:
   target: "http://localhost:8888"
   engines:
-   socketio-v3: { transports: ["websocket"] }
+   socketio-v3: {
+    transports: ["websocket"] }
   socketio:
+    query: {
+      slug: 'vincas-casting-couch'}
     transports: ["websocket"]
+    extraHeaders:
+      Cookie: "_webSession=s%3A0jTjIztrF_1pbM6uLItGr-F_c_LQu2gi.syWMHFjLw69ykB3waFnmknEkaHj0jjZu8eX03q9W404"
   phases:
-    - duration: 30 # Run scenario for...
-      arrivalCount: 2000 # Create ... virtual users per scenario
+    - duration: 10 # Run scenario for...
+      arrivalCount: 200 # Create ... virtual users per scenario
 scenarios:
   - engine: socketio-v3
     flow:
+      - think: 1
       - emit:
           channel: "chat message"
           data: "Hello! {{ $randomString() }}"
-      - emit:
-          channel: "chat message"
-          data: "Hello! {{ $randomString() }}"
-      

@@ -10,9 +10,9 @@ exports.addToPlaylist = async (req, res, next) => {
     const { id } = req.body;
 
     if (req.user) {
-        // TODO: find out what's the quota of youtube api
         youTube.getById(id, function (err, response) {
             if (!err) {
+                // TODO: don't allow adding livestreams
                 if (ytDuration.toSecond(response.items[0].contentDetails.duration) <= 600 && response.items[0].contentDetails.contentRating.ytRating == undefined) {
                     req.user.updateOne(
                         // { $pop: {playlist: 1}},
@@ -29,7 +29,7 @@ exports.addToPlaylist = async (req, res, next) => {
                     );
                 }
                 else {
-                    res.status(500).send();
+                    res.status(406).send();
                 }
             }
             else {
@@ -58,20 +58,19 @@ exports.deleteFromPlaylist = async (req, res, next) => {
         const $unset_query = {};
         $unset_query[index] = 1;
 
-        req.user.updateOne({ $unset: $unset_query }, (err, res) => {
+        req.user.updateOne({ $unset: $unset_query }, (err, result) => {
             if (err) {
                 console.log(err);
                 res.status(500).send();
             }
+            req.user.updateOne({ $pull: { "playlist": null } }, (err, result) => {
+                if (err) {
+                    console.log(err);
+                    res.status(500).send();
+                }
+                res.send();
+            });
         });
-        req.user.updateOne({ $pull: { "playlist": null } }, (err, res) => {
-            if (err) {
-                console.log(err);
-                res.status(500).send();
-            }
-        });
-
-        res.send();
     }
     else {
         res.status(401).send();
